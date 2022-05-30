@@ -103,6 +103,7 @@ if time_stamp_flag:
                 
                 for chat in all_element_list:
                     current_chat = chat.text
+
                 if current_chat in gibberish_question_list:
                     k.iloc[i,2] = 'Failed'
                     flag = True
@@ -149,7 +150,7 @@ if time_stamp_flag:
         chats = browser.find_elements(By.XPATH, "//span[contains(@class,'msg-text')]")
         datetime_stamp = datetime.datetime.now()
         edited = "Timestamp: %s-%s-%s %s:%s:%s" % (datetime_stamp.year, datetime_stamp.month, datetime_stamp.day, datetime_stamp.hour, datetime_stamp.minute, datetime_stamp.second )
-        question_list = []
+        question_list = [edited]
         reply_list = ['','']
         for item in chats:
             chat_in_textformat = item.text
