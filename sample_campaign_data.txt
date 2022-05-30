@@ -1,0 +1,325 @@
+{
+  "job_description": "Who provides the know-how to protect data, tools and information systems at Dell Technologies? We are looking for  Principal Software Engineer-IT. This position is based in Hyderabad with work from home option. It’s the Database Design Engineering and Reliability Enablement team within our Information Technology organization. We develop, design and optimize our information technology and systems functions that support our business processes and technical information systems platforms. Focused on efficiency, performance, availability and platform compatibility, we analyze, select and modify enterprise systems and application software, install network hardware and software and manage our databases – setting system and programming standards along the way. Join us to do the best work of your career and make a profound social impact as a Principal Software Engineer-IT on our DB Design Engineering and Reliability Enablement team in Hyderabad. The right candidate for this role will have a passion to develop solutions and automation to deploy/maintain/troubleshoot large distributed SQL and No-SQL environments. As a Principal Software Engineer-IT you will be responsible for Designing and Supporting critical SQL and NoSQL database systems by using tools, automating the routine operations and approaches to solve a broad spectrum of problems.",
+  "company_information": "Dell Technologies helps organizations and individuals build a brighter digital tomorrow. Our company is made up of more than 150,000 people, located in Hyderabad and over 180 locations around the world. We’re proud to be a diverse and inclusive team and have an endless passion for our mission to drive human progress.We started with computers, but we didn’t stop there. We are helping customers move into the future with multi-cloud, AI and machine learning through the most innovative technology and services portfolio for the data era. Join us and become a part of what’s next in technology, starting today. Founded in 1984 by Michael Dell, the company is one of the largest technology corporations in the world, employing more than 165,000 people in the U.S. and around the world",
+  "skills": [
+    "python"
+  ],
+  "campaign_id": 1,
+  "campaign_version": 1,
+  "initial_question_id": 1,
+  "faqs": {
+    "location": "Hyderabad",
+    "company_name": "Dell Technologies",
+    "job_designation": "Principal Software Engineer-IT"
+  },
+  "intents": {
+    "reschedule": 9,
+    "force_close": 8
+  },
+  "questions": [
+    {
+      "question_id": 1,
+      "flavours": [
+        {
+          "language": "en",
+          "flavours_questions": [
+            "Hello {{first_name}}, {{greeting_message}}.",
+            "Hello {{first_name}}, Very {{greeting_message}}."
+          ]
+        }
+      ],
+      "question_type": 1,
+      "question_options": [
+        {
+          "language": "en",
+          "options": [
+            {
+              "option_id": 1,
+              "option_label": "default",
+              "next_question_id": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "question_id": 2,
+      "flavours": [
+        {
+          "language": "en",
+          "flavours_questions": [
+            "I am calling from {{company_name}}. Is it good moment to talk?",
+            "I am phoning from {{company_name}}. Is it right time to talk?."
+          ]
+        }
+      ],
+      "question_type": 2,
+      "question_options": [
+        {
+          "language": "en",
+          "options": [
+            {
+              "option_id": 1,
+              "option_label": "yes",
+              "next_question_id": 3
+            },
+            {
+              "option_id": 2,
+              "option_label": "no",
+              "next_question_id": 11
+            },
+            {
+              "option_id": 3,
+              "option_label": "other",
+              "next_question_id": 10
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "question_id": 3,
+      "flavours": [
+        {
+          "language": "en",
+          "flavours_questions": [
+            "We're looking for a {{job_designation}} to join our team based in {{location}}. Are you interested?",
+            "We are searching for a {{job_designation}} to join our team in {{location}}. Are you interested?",
+            "{{job_designation}} is a position that we are looking to fill for {{location}} location. Are you interested?"
+          ]
+        }
+      ],
+      "question_type": 2,
+      "question_options": [
+        {
+          "language": "en",
+          "options": [
+            {
+              "option_id": 1,
+              "option_label": "yes",
+              "next_question_id": 4
+            },
+            {
+              "option_id": 2,
+              "option_label": "no",
+              "next_question_id": 11
+            },
+            {
+              "option_id": 3,
+              "option_label": "other",
+              "next_question_id": 10
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "question_id": 4,
+      "flavours": [
+        {
+          "language": "en",
+          "flavours_questions": [
+            "How many years of {{skill}} experience do you have?",
+            "How comfortable you are with {{skill}}?"
+          ]
+        }
+      ],
+      "question_type": 3,
+      "question_options": [
+        {
+          "language": "en",
+          "options": [
+            {
+              "option_id": 1,
+              "option_label": "default",
+              "next_question_id": 5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "question_id": 5,
+      "flavours": [
+        {
+          "language": "en",
+          "flavours_questions": [
+            "How much you are making in current job?",
+            "how much you are making right now?",
+            "What is your renumeration currently?",
+            "how much you get paid right now?"
+          ]
+        }
+      ],
+      "question_type": 4,
+      "question_options": [
+        {
+          "language": "en",
+          "options": [
+            {
+              "option_id": 1,
+              "option_label": "default",
+              "next_question_id": 6
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "question_id": 6,
+      "flavours": [
+        {
+          "language": "en",
+          "flavours_questions": [
+            "How much do you expect to be paid?",
+            "What are your salary goals?",
+            "What are your salary targets?",
+            "What's your salary targets?"
+          ]
+        }
+      ],
+      "question_type": 4,
+      "question_options": [
+        {
+          "language": "en",
+          "options": [
+            {
+              "option_id": 1,
+              "option_label": "default",
+              "next_question_id": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "question_id": 7,
+      "flavours": [
+        {
+          "language": "en",
+          "flavours_questions": [
+            "When will you be available for the next round of interviews?",
+            "When will the next round of interviews be convenient for you?",
+            "What time will you be available for the next round of interviews?"
+          ]
+        }
+      ],
+      "question_type": 5,
+      "question_options": [
+        {
+          "language": "en",
+          "options": [
+            {
+              "option_id": 1,
+              "option_label": "default",
+              "next_question_id": 8
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "question_id": 8,
+      "flavours": [
+        {
+          "language": "en",
+          "flavours_questions": [
+            "Thank you for your time and consideration; our HR staff will contact you for a follow-up interview.",
+            "Thank you for your time and consideration; our Human Resources staff will contact you to schedule a follow-up interview.",
+            "Thank you for your time and consideration; our Human Resources staff will contact you for a follow-up interview."
+          ]
+        }
+      ],
+      "question_type": 1,
+      "question_options": [
+        {
+          "language": "en",
+          "options": [
+            {
+              "option_id": 1,
+              "option_label": "default",
+              "next_question_id": -1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "question_id": 9,
+      "flavours": [
+        {
+          "language": "en",
+          "flavours_questions": [
+            "When can we call you again?",
+            "At what time you will be available for discussion?"
+          ]
+        }
+      ],
+      "question_type": 5,
+      "question_options": [
+        {
+          "language": "en",
+          "options": [
+            {
+              "option_id": 1,
+              "option_label": "default",
+              "next_question_id": 8
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "question_id": 10,
+      "flavours": [
+        {
+          "language": "en",
+          "flavours_questions": [
+            "Sorry i didn't understand, please repeat",
+            "can you say it one more time?",
+            "I didn't get you"
+          ]
+        }
+      ],
+      "question_type": 1,
+      "question_options": [
+        {
+          "language": "en",
+          "options": [
+            {
+              "option_id": 1,
+              "option_label": "default",
+              "next_question_id": -2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "question_id": 11,
+      "flavours": [
+        {
+          "language": "en",
+          "flavours_questions": [
+            "Thank you for your time and consideration.",
+            "Thank you for your valuable time and consideration.",
+            "Thank you for your time."
+          ]
+        }
+      ],
+      "question_type": 1,
+      "question_options": [
+        {
+          "language": "en",
+          "options": [
+            {
+              "option_id": 1,
+              "option_label": "default",
+              "next_question_id": -1
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
