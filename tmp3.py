@@ -14,8 +14,8 @@ browser.maximize_window()
 browser.get('https://chat.rootle.ai/')
 browser.implicitly_wait(3)
 
-all_sheets_dict = pd.read_excel('response_sheet.xlsx', sheet_name=None)
-reschedule_sheet = pd.read_excel("reschedule_sheet.xlsx")
+all_sheets_dict = pd.read_excel('response_sheet_small.xlsx', sheet_name=None)
+reschedule_sheet = pd.read_excel("reschedule_sheet_small.xlsx")
 no_of_rows_range = all_sheets_dict['Sheet1'].index
 len_rows = len(no_of_rows_range)
 
@@ -78,19 +78,9 @@ pass_question_list = ['Hello John, Very Good afternoon.',
                     "Thank you for your time and consideration; our Human Resources staff will contact you for a follow-up interview."
                     ]
 
-
-# def element_presence_check(xpath):
-#     element = None
-#     element_obj = WebDriverWait(browser, 7).until(
-#                   EC.presence_of_element_located((By.XPATH, xpath))
-#                     )
-#     element = element_obj.text
-#     return element
-
 #Looping through all the sheets by rows.
 def automation_script(status_file, reschedule_file, start_row_number = 0, end_row_number = len_rows):
     sent_replies_list = []
-    
     reschedule_index_increment = 0
     conv_no = 1
     writer = pd.ExcelWriter(status_file, engine = 'openpyxl', mode = 'a', if_sheet_exists = 'overlay') # pylint: disable=abstract-class-instantiated
@@ -114,29 +104,17 @@ def automation_script(status_file, reschedule_file, start_row_number = 0, end_ro
                 t.sleep(0.5)
                 start_time = datetime.datetime.now()
                 sent_replies_list.append(k.iloc[i,1])
-                
                 try:
                     element_obj = WebDriverWait(browser, 7).until(
-                                EC.presence_of_element_located((By.XPATH, f"//div[@id='conversationSection']/div[@class='open-text-component'][{chatbot_element_counter}]/div[@class='ant-row']/div[@class='message-control bot-control']/div[@class='msg-box default-control']"))
-                    )
+                                  EC.presence_of_element_located((By.XPATH, f"//div[@id='conversationSection']/div[@class='open-text-component'][{chatbot_element_counter}]/div[@class='ant-row']/div[@class='message-control bot-control']/div[@class='msg-box default-control']"))
+                                  )
                     element = element_obj.text
                     if element:
                         time_log = datetime.datetime.now() - start_time
-                        time_logs_list.append(time_log)
-
-                    # open_text_component_element = element_presence_check(f"//div[@id='conversationSection']/div[@class='open-text-component'][{chatbot_element_counter}]/div[@class='ant-row']/div[@class='message-control bot-control']/div[@class='msg-box default-control']")
-                    # if open_text_component_element:
-                    #     pass
-                    # else:
-                    #     message_component_element = element_presence_check("//div[@id='conversationSection']/div[@class='message-component'][2]/div[@class='ant-row']/div[@class='message-control bot-control']/div[@class='msg-box default-control']")
-                    #     if message_component_element:
-                    #         pass
-                    #     else:
-                    #         pass                    
+                        time_logs_list.append(time_log)                  
 
                     first_ques = browser.find_element_by_xpath("/html/body/div/div/div/div[1]/div[2]/div[1]/div/div/span").text
 
-                    
                     # all_element_list = browser.find_elements_by_class_name("msg-text")
                     # current_chat = all_element_list[-1].text
                     # for chat in all_element_list:
@@ -163,7 +141,6 @@ def automation_script(status_file, reschedule_file, start_row_number = 0, end_ro
                             sent_replies_list.append(reschedule_sheet.iloc[j+reschedule_index_increment,1])
 
                             # all_element_list_for_rescheduling = browser.find_elements_by_class_name("msg-text")
-                            
                             # for chat in all_element_list_for_rescheduling:
                             #     current_chat_for_rescheduling = chat.text
 
@@ -193,13 +170,10 @@ def automation_script(status_file, reschedule_file, start_row_number = 0, end_ro
                         t.sleep(0.5)
                         k.iloc[i,2] = 'Paragraph Repeat'
                         flag = True
-
-                    print(k)
                     t.sleep(0.5)
                     k.to_excel(writer, sheet_name=f'status_sheet{tmp}', index=False)
                     tmp = tmp + 1
                     writer.save()
-
                     if flag:
                         flag = False
                         break
@@ -208,8 +182,8 @@ def automation_script(status_file, reschedule_file, start_row_number = 0, end_ro
                 except TimeoutException:
                     try:
                         message_component_element_obj = WebDriverWait(browser, 7).until(
-                                EC.presence_of_element_located((By.XPATH, "//div[@id='conversationSection']/div[@class='message-component'][2]/div[@class='ant-row']/div[@class='message-control bot-control']/div[@class='msg-box default-control']"))
-                        )
+                                                        EC.presence_of_element_located((By.XPATH, "//div[@id='conversationSection']/div[@class='message-component'][2]/div[@class='ant-row']/div[@class='message-control bot-control']/div[@class='msg-box default-control']"))
+                                                        )
                         message_component_element = message_component_element_obj.text
                         if message_component_element:
                             time_log = datetime.datetime.now() - start_time
@@ -267,4 +241,4 @@ def automation_script(status_file, reschedule_file, start_row_number = 0, end_ro
     #     print('There seems to be an error in TimeStamp')
 
 
-automation_script("response_with_status.xlsx", "reschedule_sheet.xlsx")
+automation_script("response_with_status_temp.xlsx", "reschedule_sheet_small.xlsx", len_rows-3, len_rows-2)

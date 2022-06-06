@@ -7,7 +7,6 @@ import datetime
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
-import traceback
 
 
 browser = webdriver.Firefox()
@@ -79,19 +78,9 @@ pass_question_list = ['Hello John, Very Good afternoon.',
                     "Thank you for your time and consideration; our Human Resources staff will contact you for a follow-up interview."
                     ]
 
-
-def element_presence_check(xpath):
-    element = None
-    element_obj = WebDriverWait(browser, 10).until(
-                  EC.presence_of_element_located((By.XPATH, xpath))
-                    )
-    element = element_obj.text
-    return element
-
 #Looping through all the sheets by rows.
 def automation_script(status_file, reschedule_file, start_row_number = 0, end_row_number = len_rows):
     sent_replies_list = []
-    
     reschedule_index_increment = 0
     conv_no = 1
     writer = pd.ExcelWriter(status_file, engine = 'openpyxl', mode = 'a', if_sheet_exists = 'overlay') # pylint: disable=abstract-class-instantiated
@@ -108,56 +97,77 @@ def automation_script(status_file, reschedule_file, start_row_number = 0, end_ro
         for k,v in all_sheets_dict.items():
             k = pd.DataFrame(v)
             try:
-                reply_field = browser.find_element_by_xpath('/html/body/div/div/div/div[2]/div/input')
+                reply_field = browser.find_element(by=By.XPATH, value='/html/body/div/div/div/div[2]/div/input')
                 reply_field.send_keys(k.iloc[i,1])
-                reply_button = browser.find_element_by_xpath('/html/body/div[1]/div/div/div[2]/div/button')
+                reply_button = browser.find_element(by=By.XPATH, value='/html/body/div[1]/div/div/div[2]/div/button')
                 reply_button.click()
+                t.sleep(0.5)
                 start_time = datetime.datetime.now()
                 sent_replies_list.append(k.iloc[i,1])
-                
-                try:
-                    open_text_component_element = element_presence_check(f"//div[@id='conversationSection']/div[@class='open-text-component'][{chatbot_element_counter}]/div[@class='ant-row']/div[@class='message-control bot-control']/div[@class='msg-box default-control']")
-                    print(open_text_component_element,'++-+++-+-+-+-+-+//-*+/-*+*+*+*/+*+*')
-                    if open_text_component_element is not None:
-                        time_log = datetime.datetime.now() - start_time
-                        time_logs_list.append(time_log)
-                        first_ques = browser.find_element_by_xpath("/html/body/div/div/div/div[1]/div[2]/div[1]/div/div/span").text
+                attempts_case_1 = 3
+                for attempt in range(1, attempts_case_1+1):
+                    print(f'Attempt No.: {attempt}******************************')
+                    try:
+                        element_obj = WebDriverWait(browser, 7).until(
+                                    EC.presence_of_element_located((By.XPATH, f"//div[@id='conversationSection']/div[@class='open-text-component'][{chatbot_element_counter}]/div[@class='ant-row']/div[@class='message-control bot-control']/div[@class='msg-box default-control']"))
+                                    )
+                        element = element_obj.text
+                        print('element found******************************************')
+                        if element:
+                            time_log = datetime.datetime.now() - start_time
+                            time_logs_list.append(time_log)                  
 
-                        if open_text_component_element in gibberish_question_list:
+                        first_ques = browser.find_element(by=By.XPATH, value="/html/body/div/div/div/div[1]/div[2]/div[1]/div/div/span").text
+
+                        if element in gibberish_question_list:
                             k.iloc[i,2] = 'Failed'
                             flag = True
-                        elif open_text_component_element == first_ques or open_text_component_element in chat_history_list:
+                        elif element == first_ques or element in chat_history_list:
                             t.sleep(0.5)
                             k.iloc[i,2] = 'Repeated'
                             flag=True
-                        elif open_text_component_element in pass_question_list:
+                        elif element in pass_question_list:
                             k.iloc[i,2] = 'Passed'
-                        elif open_text_component_element in reschedule_question_list:
+                        elif element in reschedule_question_list:
                             k.iloc[i,2] = 'Rescheduled'
                             for j in range(len(reschedule_sheet.index)):
-                                reply_field = browser.find_element_by_xpath('/html/body/div/div/div/div[2]/div/input')
+                                reply_field = browser.find_element(by=By.XPATH, value='/html/body/div/div/div/div[2]/div/input')
                                 reply_field.send_keys(reschedule_sheet.iloc[j+reschedule_index_increment,1])
-                                reply_button = browser.find_element_by_xpath('/html/body/div[1]/div/div/div[2]/div/button')
+                                reply_button = browser.find_element(by=By.XPATH, value='/html/body/div[1]/div/div/div[2]/div/button')
                                 reply_button.click()
                                 # t.sleep(0.5)
                                 start_time = datetime.datetime.now()
                                 sent_replies_list.append(reschedule_sheet.iloc[j+reschedule_index_increment,1])
-
-                                try:
-                                    reschedule_element_obj = WebDriverWait(browser, 7).until(
-                                                EC.presence_of_element_located((By.XPATH, f"//div[@id='conversationSection']/div[@class='message-component'][2]/div[@class='ant-row']/div[@class='message-control bot-control']/div[@class='msg-box default-control']"))
-                                    )
-                                    reschedule_element = reschedule_element_obj.text
-                                    if reschedule_element:
-                                        time_log = datetime.datetime.now() - start_time
-                                        time_logs_list.append(time_log)
-                                    if reschedule_element in regards_list:
-                                        reschedule_sheet.iloc[j+reschedule_index_increment,2] = 'Passed'
-                                    t.sleep(0.5)
-                                    reschedule_sheet.to_excel(reschedule_writer, index=False)
-                                    reschedule_writer.save()
-                                except TimeoutException as ex:
-                                    print('went to exception timeout for reschedule*******************************')
+                                attempts_case_2 = 3
+                                for reschedule_attempt in range(1, attempts_case_2+1):
+                                    print(f'Reschedule Attempt No.: {reschedule_attempt}******************************')
+                                    try:
+                                        reschedule_element_obj = WebDriverWait(browser, 7).until(
+                                                                 EC.presence_of_element_located((By.XPATH, f"//div[@id='conversationSection']/div[@class='message-component'][2]/div[@class='ant-row']/div[@class='message-control bot-control']/div[@class='msg-box default-control']"))
+                                                                 )
+                                        reschedule_element = reschedule_element_obj.text
+                                        if reschedule_element:
+                                            time_log = datetime.datetime.now() - start_time
+                                            time_logs_list.append(time_log)
+                                        if reschedule_element in regards_list:
+                                            reschedule_sheet.iloc[j+reschedule_index_increment,2] = 'Passed'
+                                        t.sleep(0.5)
+                                        reschedule_sheet.to_excel(reschedule_writer, index=False)
+                                        reschedule_writer.save()
+                                        break
+                                    except TimeoutException:
+                                        print(f'Reschedule Attempt {reschedule_attempt} hit the reschedule exception.**************************************')
+                                        continue
+                                        # time_log = datetime.datetime.now() - start_time
+                                        # time_logs_list.append(time_log)
+                                        # reschedule_sheet.iloc[j+reschedule_index_increment,2] = 'Server Timeout'
+                                        # t.sleep(0.5)
+                                        # reschedule_sheet.to_excel(reschedule_writer, index=False)
+                                        # reschedule_writer.save()
+                                else:
+                                    print('Reschedule attempt limit hit and came to reschedule else part')
+                                    time_log = datetime.datetime.now() - start_time
+                                    time_logs_list.append(time_log)
                                     reschedule_sheet.iloc[j+reschedule_index_increment,2] = 'Server Timeout'
                                     t.sleep(0.5)
                                     reschedule_sheet.to_excel(reschedule_writer, index=False)
@@ -169,49 +179,54 @@ def automation_script(status_file, reschedule_file, start_row_number = 0, end_ro
                             t.sleep(0.5)
                             k.iloc[i,2] = 'Paragraph Repeat'
                             flag = True
-
-                        # print(k)
                         t.sleep(0.5)
+                        print(k)
                         k.to_excel(writer, sheet_name=f'status_sheet{tmp}', index=False)
                         tmp = tmp + 1
                         writer.save()
-
                         if flag:
                             flag = False
                             break
-                        chat_history_list.append(open_text_component_element)
+                        chat_history_list.append(element)
                         chatbot_element_counter = chatbot_element_counter + 1
-                    else:
+                        break
+                    except TimeoutException:
                         try:
-                            message_component_element = element_presence_check("//div[@id='conversationSection']/div[@class='message-component'][2]/div[@class='ant-row']/div[@class='message-control bot-control']/div[@class='msg-box default-control']")
-                            print(message_component_element,'*/**/*/**/**/*-/*/**/**/**/***/**/*/*')
-                            if message_component_element is not None:
+                            message_component_element_obj = WebDriverWait(browser, 7).until(
+                                                            EC.presence_of_element_located((By.XPATH, "//div[@id='conversationSection']/div[@class='message-component'][2]/div[@class='ant-row']/div[@class='message-control bot-control']/div[@class='msg-box default-control']"))
+                                                            )
+                            message_component_element = message_component_element_obj.text
+                            if message_component_element:
                                 time_log = datetime.datetime.now() - start_time
                                 time_logs_list.append(time_log)
-                                if message_component_element in regards_list:
-                                    k.iloc[i,2] = 'Passed'
-                                    k.to_excel(writer, sheet_name=f'status_sheet{tmp}', index=False)
-                                    writer.save()
-                                    # print(k)
-                                    break
+                            if message_component_element in regards_list:
+                                k.iloc[i,2] = 'Passed'
+                                k.to_excel(writer, sheet_name=f'status_sheet{tmp}', index=False)
+                                writer.save()
+                                print(k)
+                                break
                         except TimeoutException:
-                            print('went to message component exception timeout*******************************')
-                            k.iloc[i,2] = 'Server Timeout'
-                            t.sleep(0.5)
-                            k.to_excel(writer, sheet_name=f'status_sheet{tmp}', index=False)
-                            writer.save()
-                            # print(k)
-                            break
-                        # else:
-                        #     pass                    
-                except TimeoutException:
-                    print('went to exception timeout*******************************')
+                            print(f'Attempt {attempt} hit the inner exception.**************************************')
+                            continue
+                            # print('went to message component element exception timeout*******************************')
+                            # k.iloc[i,2] = 'Server Timeout'
+                            # t.sleep(0.5)
+                            # k.to_excel(writer, sheet_name=f'status_sheet{tmp}', index=False)
+                            # writer.save()
+                            # print(k)   
+                        print(f'Attempt {attempt} hit the outer exception.**************************************')
+                        continue
+                else:
+                    time_log = datetime.datetime.now() - start_time
+                    time_logs_list.append(time_log)  
+                    print('went to else part of recursive loop*******************************')
                     k.iloc[i,2] = 'Server Timeout'
                     t.sleep(0.5)
                     k.to_excel(writer, sheet_name=f'status_sheet{tmp}', index=False)
                     writer.save()
-                    # print(k)
+                    print(k)
                     break
+                print('came out of attempt for loop*****************')
             except exceptions.NoSuchElementException as e:
                 browser.implicitly_wait(2)
 
@@ -245,4 +260,4 @@ def automation_script(status_file, reschedule_file, start_row_number = 0, end_ro
     #     print('There seems to be an error in TimeStamp')
 
 
-automation_script("response_with_status_temp.xlsx", "reschedule_sheet_small.xlsx", len_rows-3, len_rows-2)
+automation_script("response_with_status_temp.xlsx", "reschedule_sheet_small.xlsx", len_rows-10, len_rows-9)

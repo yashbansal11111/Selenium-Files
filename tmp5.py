@@ -7,7 +7,7 @@ import datetime
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
-import traceback
+
 
 
 browser = webdriver.Firefox()
@@ -118,6 +118,9 @@ def automation_script(status_file, reschedule_file, start_row_number = 0, end_ro
                 try:
                     open_text_component_element = element_presence_check(f"//div[@id='conversationSection']/div[@class='open-text-component'][{chatbot_element_counter}]/div[@class='ant-row']/div[@class='message-control bot-control']/div[@class='msg-box default-control']")
                     print(open_text_component_element,'++-+++-+-+-+-+-+//-*+/-*+*+*+*/+*+*')
+                    message_component_element = element_presence_check("//div[@id='conversationSection']/div[@class='message-component'][2]/div[@class='ant-row']/div[@class='message-control bot-control']/div[@class='msg-box default-control']")
+                    
+                    print(message_component_element,'***************************************')
                     if open_text_component_element is not None:
                         time_log = datetime.datetime.now() - start_time
                         time_logs_list.append(time_log)
@@ -181,29 +184,15 @@ def automation_script(status_file, reschedule_file, start_row_number = 0, end_ro
                             break
                         chat_history_list.append(open_text_component_element)
                         chatbot_element_counter = chatbot_element_counter + 1
-                    else:
-                        try:
-                            message_component_element = element_presence_check("//div[@id='conversationSection']/div[@class='message-component'][2]/div[@class='ant-row']/div[@class='message-control bot-control']/div[@class='msg-box default-control']")
-                            print(message_component_element,'*/**/*/**/**/*-/*/**/**/**/***/**/*/*')
-                            if message_component_element is not None:
-                                time_log = datetime.datetime.now() - start_time
-                                time_logs_list.append(time_log)
-                                if message_component_element in regards_list:
-                                    k.iloc[i,2] = 'Passed'
-                                    k.to_excel(writer, sheet_name=f'status_sheet{tmp}', index=False)
-                                    writer.save()
-                                    # print(k)
-                                    break
-                        except TimeoutException:
-                            print('went to message component exception timeout*******************************')
-                            k.iloc[i,2] = 'Server Timeout'
-                            t.sleep(0.5)
+                    if message_component_element is not None:
+                        time_log = datetime.datetime.now() - start_time
+                        time_logs_list.append(time_log)
+                        if message_component_element in regards_list:
+                            k.iloc[i,2] = 'Passed'
                             k.to_excel(writer, sheet_name=f'status_sheet{tmp}', index=False)
                             writer.save()
                             # print(k)
-                            break
-                        # else:
-                        #     pass                    
+                            break                  
                 except TimeoutException:
                     print('went to exception timeout*******************************')
                     k.iloc[i,2] = 'Server Timeout'
