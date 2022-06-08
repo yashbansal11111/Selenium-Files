@@ -50,10 +50,7 @@ reschedule_question_list = ['When can we call you again?',
 gibberish_question_list = ["Sorry i didn't understand, please repeat",
                            "can you say it one more time?",
                            "I didn't get you",
-                        #    "Thank you for your time and consideration.",
-                        #    "Thank you for your valuable time and consideration.",
-                        #    "Thank you for your time."
-                            ]
+                           ]
 pass_question_list = ['Hello John, Very Good afternoon.',
                       'Hello John, Very Good morning.',
                       'Hello John, Very Good evening.',
@@ -85,7 +82,6 @@ pass_question_list = ['Hello John, Very Good afternoon.',
 
 #Looping through all the sheets by rows.
 def rootle_automation(status_file, reschedule_file, start_row_number = 0, end_row_number = len_rows):
-    sent_response_list = []
     reschedule_index_increment = 0
     conv_no = 1
     main_writer = pd.ExcelWriter(status_file, engine = 'openpyxl', mode = 'a', if_sheet_exists = 'overlay') # pylint: disable=abstract-class-instantiated
@@ -93,6 +89,7 @@ def rootle_automation(status_file, reschedule_file, start_row_number = 0, end_ro
     # if time_stamp_flag:
     for i in range(start_row_number, end_row_number):
         print(i,'++++++++++')
+        sent_response_list = []
         chat_result_df = pd.DataFrame(columns=['Questions',
                                                'Replies',
                                                'Timelog'
@@ -111,17 +108,16 @@ def rootle_automation(status_file, reschedule_file, start_row_number = 0, end_ro
                 reply_field.send_keys(k.iloc[i,1])
                 reply_button = driver.find_element(by=By.XPATH, value='/html/body/div[1]/div/div/div[2]/div/button')
                 reply_button.click()
-                t.sleep(0.5)
                 start_time = datetime.datetime.now()
                 sent_response_list.append(k.iloc[i,1])
+                print(sent_response_list,'////////////////////////////////')
                 attempts_case_1 = 5
                 for attempt in range(1, attempts_case_1 + 1):
                     print(f'Attempt No.: {attempt}******************************')
                     try:
+                        open_text_component_element_xpath = f"//div[@id='conversationSection']/div[@class='open-text-component'][{chatbot_element_counter}]/div[@class='ant-row']/div[@class='message-control bot-control']/div[@class='msg-box default-control']"
                         element_obj = WebDriverWait(driver, 7).until(
-                                      EC.presence_of_element_located((
-                                      By.XPATH, f"//div[@id='conversationSection']/div[@class='open-text-component'][{chatbot_element_counter}]/div[@class='ant-row']/div[@class='message-control bot-control']/div[@class='msg-box default-control']"
-                                                                     )
+                                      EC.presence_of_element_located((By.XPATH, open_text_component_element_xpath)
                                                                     )
                                                                     )
                         element = element_obj.text
@@ -140,7 +136,7 @@ def rootle_automation(status_file, reschedule_file, start_row_number = 0, end_ro
                         elif element == first_ques or element in chat_history_list:
                             t.sleep(0.5)
                             k.iloc[i,2] = 'Repeated'
-                            inner_flag=True
+                            inner_flag = True
                             outer_flag = True
                         elif element in pass_question_list:
                             k.iloc[i,2] = 'Passed'
@@ -157,10 +153,9 @@ def rootle_automation(status_file, reschedule_file, start_row_number = 0, end_ro
                                 for reschedule_attempt in range(1, attempts_case_2 + 1):
                                     print(f'Reschedule Attempt No.: {reschedule_attempt}******************************')
                                     try:
+                                        message_component_element_xpath = "//div[@id='conversationSection']/div[@class='message-component'][2]/div[@class='ant-row']/div[@class='message-control bot-control']/div[@class='msg-box default-control']"
                                         reschedule_element_obj = WebDriverWait(driver, 7).until(
-                                                                 EC.presence_of_element_located((
-                                                                 By.XPATH, f"//div[@id='conversationSection']/div[@class='message-component'][2]/div[@class='ant-row']/div[@class='message-control bot-control']/div[@class='msg-box default-control']"
-                                                                                                )
+                                                                 EC.presence_of_element_located((By.XPATH, message_component_element_xpath)
                                                                                                )
                                                                                                )
                                         reschedule_element = reschedule_element_obj.text
@@ -211,10 +206,9 @@ def rootle_automation(status_file, reschedule_file, start_row_number = 0, end_ro
                     except TimeoutException:
                         start_time_for_message_component_element = datetime.datetime.now()
                         try:
+                            message_component_element_xpath = "//div[@id='conversationSection']/div[@class='message-component'][2]/div[@class='ant-row']/div[@class='message-control bot-control']/div[@class='msg-box default-control']"
                             message_component_element_obj = WebDriverWait(driver, 7).until(
-                                                            EC.presence_of_element_located((
-                                                            By.XPATH, "//div[@id='conversationSection']/div[@class='message-component'][2]/div[@class='ant-row']/div[@class='message-control bot-control']/div[@class='msg-box default-control']"
-                                                                                           )
+                                                            EC.presence_of_element_located((By.XPATH, message_component_element_xpath)
                                                                                           )
                                                                                           )
                             message_component_element = message_component_element_obj.text
