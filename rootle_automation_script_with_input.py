@@ -8,6 +8,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 
+attempts_case_1 = input("Enter the number of attempts you want the script to perform for finding web element: ")
 
 driver = webdriver.Firefox()
 driver.maximize_window()
@@ -108,8 +109,8 @@ def rootle_automation(status_file, reschedule_file, start_row_number=0, end_row_
                 reply_button.click()
                 start_time = datetime.datetime.now()
                 sent_response_list.append(k.iloc[i, 1])
-                attempts_case_1 = 5
-                for attempt in range(1, attempts_case_1 + 1):
+                # attempts_case_1 = 5
+                for attempt in range(1, int(attempts_case_1) + 1):
                     print(f'Attempt No: {attempt}')
                     try:
                         open_text_component_element_xpath = f"//div[@id='conversationSection']/div[@class='open-text-component'][{chatbot_element_counter}]/div[@class='ant-row']/div[@class='message-control bot-control']/div[@class='msg-box default-control']"
@@ -143,8 +144,8 @@ def rootle_automation(status_file, reschedule_file, start_row_number=0, end_row_
                                 reply_button.click()
                                 start_time = datetime.datetime.now()
                                 sent_response_list.append(reschedule_sheet.iloc[j+reschedule_index_increment,1])
-                                attempts_case_2 = 5
-                                for reschedule_attempt in range(1, attempts_case_2 + 1):
+                                # attempts_case_2 = 5
+                                for reschedule_attempt in range(1, int(attempts_case_1) + 1):
                                     print(f'Reschedule Attempt No: {reschedule_attempt}')
                                     try:
                                         message_component_element_xpath = "//div[@id='conversationSection']/div[@class='message-component'][2]/div[@class='ant-row']/div[@class='message-control bot-control']/div[@class='msg-box default-control']"
@@ -253,4 +254,4 @@ def rootle_automation(status_file, reschedule_file, start_row_number=0, end_row_
     #     print('There seems to be an error in TimeStamp')
 
 
-rootle_automation("response_with_status.xlsx", "reschedule_sheet.xlsx")
+rootle_automation("response_with_status.xlsx", "reschedule_sheet.xlsx", len_rows-1, len_rows)
