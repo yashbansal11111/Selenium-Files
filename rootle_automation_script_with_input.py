@@ -88,6 +88,7 @@ def rootle_automation(status_file, reschedule_file, start_row_number=0, end_row_
     # if time_stamp_flag:
     for i in range(start_row_number, end_row_number):
         print('Iteration No.: ',i)
+        datetime_stamp = datetime.datetime.now()
         sent_response_list = []
         chat_result_df = pd.DataFrame(columns=['Questions',
                                                'Replies',
@@ -172,12 +173,13 @@ def rootle_automation(status_file, reschedule_file, start_row_number=0, end_row_
                                     reschedule_writer.save()
                                 reschedule_index_increment = reschedule_index_increment + 1
                                 inner_flag = True
+                                outer_flag = True
                                 break
                         else:
                             k.iloc[i, 2] = 'Paragraph Repeat'
                             inner_flag = True
                             outer_flag = True
-                        t.sleep(0.5)
+                        # t.sleep(0.5)
                         k.to_excel(main_writer, sheet_name=f'status_sheet{sheet_no}', index=False)
                         sheet_no = sheet_no + 1
                         main_writer.save()
@@ -216,15 +218,14 @@ def rootle_automation(status_file, reschedule_file, start_row_number=0, end_row_
                     main_writer.save()
                     break
             except exceptions.NoSuchElementException:
-                driver.implicitly_wait(2)
+                # driver.implicitly_wait(2)
+                pass
             if outer_flag:
                 outer_flag = False
                 break
-
         # chat_results.csv
         chats = driver.find_elements(By.XPATH, "//span[contains(@class,'msg-text')]")
-        t.sleep(0.5)
-        datetime_stamp = datetime.datetime.now()
+        # datetime_stamp = datetime.datetime.now()
         timestamp = "Timestamp: %s-%s-%s %s:%s:%s" % (datetime_stamp.year,
                                                       datetime_stamp.month,
                                                       datetime_stamp.day,
@@ -248,10 +249,10 @@ def rootle_automation(status_file, reschedule_file, start_row_number=0, end_row_
         chat_result_df['Timelog'] = pd.Series(time_logs_list)
         chat_result_df.to_csv('chat_results.csv', mode='a', index=False)
         conv_no = conv_no + 1
-        driver.implicitly_wait(2)
+        print('-------------------------------------------')
         driver.refresh()
     # else:
     #     print('There seems to be an error in TimeStamp')
 
 
-rootle_automation("response_with_status.xlsx", "reschedule_sheet.xlsx", len_rows-1, len_rows)
+rootle_automation("response_with_status.xlsx", "reschedule_sheet.xlsx", len_rows-50, len_rows-46)

@@ -171,6 +171,7 @@ def rootle_automation(status_file, reschedule_file, start_row_number=0, end_row_
                                     reschedule_writer.save()
                                 reschedule_index_increment = reschedule_index_increment + 1
                                 inner_flag = True
+                                outer_flag = True
                                 break
                         else:
                             k.iloc[i, 2] = 'Paragraph Repeat'
@@ -215,7 +216,8 @@ def rootle_automation(status_file, reschedule_file, start_row_number=0, end_row_
                     main_writer.save()
                     break
             except exceptions.NoSuchElementException:
-                driver.implicitly_wait(2)
+                # driver.implicitly_wait(2)
+                pass
             if outer_flag:
                 outer_flag = False
                 break

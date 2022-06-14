@@ -64,6 +64,7 @@ pass_question_list = ['Hello John, Very Good afternoon.',
                       ]
                     
 driver = webdriver.Firefox()
+driver.maximize_window()
 # tab_no = 1
 
 def webdriverhandler(driver, all_sheets_dict, i, kwargs):
@@ -116,7 +117,6 @@ def webdriverhandler(driver, all_sheets_dict, i, kwargs):
                     elif element in reschedule_question_list:
                         k.iloc[i, 2] = 'Rescheduled'
                         for j in range(len(reschedule_sheet.index)):
-                            
                             reply_field = driver.find_element(by=By.XPATH, value='/html/body/div/div/div/div[2]/div/input')
                             reply_field.send_keys(reschedule_sheet.iloc[j+reschedule_index_increment,1])
                             reply_button = driver.find_element(by=By.XPATH, value='/html/body/div[1]/div/div/div[2]/div/button')
@@ -148,17 +148,20 @@ def webdriverhandler(driver, all_sheets_dict, i, kwargs):
                                 reschedule_sheet.iloc[j+reschedule_index_increment, 2] = 'Server Timeout'
                                 reschedule_sheet.to_excel(reschedule_writer, index=False)
                                 reschedule_writer.save()
+                            
                             reschedule_index_increment = reschedule_index_increment + 1
                             inner_flag = True
+                            outer_flag = True
                             break
                     else:
                         k.iloc[i, 2] = 'Paragraph Repeat'
                         inner_flag = True
                         outer_flag = True
-                    t.sleep(0.5)
+                    #t.sleep(0.5)
                     k.to_excel(main_writer, sheet_name=f'status_sheet{sheet_no}', index=False)
                     sheet_no = sheet_no + 1
                     main_writer.save()
+                    
                     if inner_flag:
                         inner_flag = False
                         break
@@ -185,7 +188,7 @@ def webdriverhandler(driver, all_sheets_dict, i, kwargs):
                     except TimeoutException:
                         print(f'Attempt {attempt} hit the exception.')
                         continue
-                    continue
+                    # continue
             else:
                 time_log = datetime.datetime.now() - start_time
                 time_logs_list.append(time_log)  
@@ -193,11 +196,17 @@ def webdriverhandler(driver, all_sheets_dict, i, kwargs):
                 k.to_excel(main_writer, sheet_name=f'status_sheet{sheet_no}', index=False)
                 main_writer.save()
                 break
+        
         except exceptions.NoSuchElementException:
-            driver.implicitly_wait(2)
+            print('in no such element exception..........')
+            # driver.implicitly_wait(2)
+            pass
+        print(datetime.datetime.now(),'+++++++++++++++++++')   
         if outer_flag:
+            print('in outer flag')
             outer_flag = False
             break
+    
     kwargs['reschedule_index_increment'] = reschedule_index_increment
     # chat_results.csv
     chats = driver.find_elements(By.XPATH, "//span[contains(@class,'msg-text')]")
@@ -227,7 +236,7 @@ def webdriverhandler(driver, all_sheets_dict, i, kwargs):
     chat_result_df.to_csv('chat_results.csv', mode='a', index=False)
     conv_no = conv_no + 1
     kwargs['conv_no'] = conv_no
-    driver.implicitly_wait(2)
+    # driver.implicitly_wait(2)
     return True
     # driver.refresh()
     # else:
@@ -247,12 +256,11 @@ def rootle_automation(status_file, reschedule_file, start_row_number=0, end_row_
     python_kwrds['reschedule_writer'] = reschedule_writer
     # tab_no = 1
     for tab in range(1, no_of_tabs + 1):
-        driver.maximize_window()
+        # driver.maximize_window()
         driver.execute_script(f"window.open('about:blank','Tab{tab_no}');")
         driver.switch_to.window(f"Tab{tab_no}")
         driver.get('https://chat.rootle.ai/')
-        driver.implicitly_wait(3)
-        tab_no += 1
+        driver.implicitly_wait(2)
     # start_row_number = start_row_number+tab_no
         for i in range(start_row_number, end_row_number):
             print('Iteration No.: ',i)
@@ -280,6 +288,7 @@ def rootle_automation(status_file, reschedule_file, start_row_number=0, end_row_
             start_row_number +=1
             if response:
                 break
+        tab_no += 1
     # tab_no += 1
 
             # # NEEDED...

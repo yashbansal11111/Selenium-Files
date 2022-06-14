@@ -146,6 +146,7 @@ def webdriverhandler(driver, all_sheets_dict, i, kwargs):
                                 reschedule_writer.save()
                             reschedule_index_increment = reschedule_index_increment + 1
                             inner_flag = True
+                            outer_flag = True
                             break
                     else:
                         k.iloc[i, 2] = 'Paragraph Repeat'
@@ -190,11 +191,12 @@ def webdriverhandler(driver, all_sheets_dict, i, kwargs):
                 main_writer.save()
                 break
         except exceptions.NoSuchElementException:
-            driver.implicitly_wait(2)
+            # driver.implicitly_wait(2)
+            pass
         if outer_flag:
             outer_flag = False
             break
-
+    kwargs['reschedule_index_increment'] = reschedule_index_increment
     # chat_results.csv
     chats = driver.find_elements(By.XPATH, "//span[contains(@class,'msg-text')]")
     t.sleep(0.5)
@@ -222,7 +224,8 @@ def webdriverhandler(driver, all_sheets_dict, i, kwargs):
     chat_result_df['Timelog'] = pd.Series(time_logs_list)
     chat_result_df.to_csv('chat_results.csv', mode='a', index=False)
     conv_no = conv_no + 1
-    driver.implicitly_wait(2)
+    kwargs['conv_no'] = conv_no
+    # driver.implicitly_wait(2)
     return True
     # driver.refresh()
     # else:
